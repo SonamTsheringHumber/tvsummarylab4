@@ -1,31 +1,31 @@
 """tvsummary: download TV shows from TVmaze and summarize them."""
 
 from . import config
-from .models import Show
-from .sources import TVMazeSource, DownloadError
 from .aggregations import (
     Aggregation,
-    ShowsPerGenre,
     AverageRatingByLanguage,
-    ShowsPerDecade,
-    TopRatedShows,
     MissingValues,
+    ShowsPerDecade,
+    ShowsPerGenre,
+    TopRatedShows,
     default_aggregations,
 )
+from .models import Show
 from .report import build_summary, write_summary
+from .sources import DownloadError, TVMazeSource
 
 __all__ = [
-    "config",
-    "Show",
-    "TVMazeSource",
-    "DownloadError",
     "Aggregation",
-    "ShowsPerGenre",
     "AverageRatingByLanguage",
-    "ShowsPerDecade",
-    "TopRatedShows",
+    "DownloadError",
     "MissingValues",
-    "default_aggregations",
+    "Show",
+    "ShowsPerDecade",
+    "ShowsPerGenre",
+    "TVMazeSource",
+    "TopRatedShows",
     "build_summary",
+    "config",
+    "default_aggregations",
     "write_summary",
 ]

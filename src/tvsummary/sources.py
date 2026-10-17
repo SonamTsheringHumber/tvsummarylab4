@@ -40,9 +40,7 @@ class TVMazeSource:
             ) from exc
 
         if not isinstance(data, list):
-            raise DownloadError(
-                "Unexpected response format: expected a list of shows."
-            )
+            raise DownloadError("Unexpected response format: expected a list of shows.")
         return data
 
     def _to_shows(self, raw_records):

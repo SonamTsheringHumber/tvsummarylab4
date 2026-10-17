@@ -5,10 +5,10 @@ import sys
 from tvsummary import (
     DownloadError,
     TVMazeSource,
-    default_aggregations,
     build_summary,
-    write_summary,
     config,
+    default_aggregations,
+    write_summary,
 )
 
 

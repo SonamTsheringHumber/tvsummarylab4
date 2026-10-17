@@ -1,7 +1,7 @@
 """Building and writing the summary."""
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from . import config
@@ -16,7 +16,7 @@ def build_summary(shows, skipped_count, aggregations, url=config.SOURCE_URL):
         "source_url": url,
         "records_processed": len(shows),
         "records_skipped": skipped_count,
-        "generated_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "generated_at_utc": datetime.now(UTC).isoformat(timespec="seconds"),
     }
     for aggregation in aggregations:
         summary[aggregation.name] = aggregation.compute(shows)

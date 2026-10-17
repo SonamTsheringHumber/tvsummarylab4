@@ -1,6 +1,6 @@
 import unittest
 
-from tvsummary import Show, ShowsPerGenre, ShowsPerDecade, TopRatedShows
+from tvsummary import Show, ShowsPerDecade, ShowsPerGenre, TopRatedShows
 
 
 def make_show(**overrides):
@@ -37,10 +37,16 @@ class TestShow(unittest.TestCase):
 class TestAggregations(unittest.TestCase):
     def setUp(self):
         self.shows = [
-            make_show(id=1, name="A", genres=["Drama", "Crime"],
-                      rating={"average": 9.0}),
-            make_show(id=2, name="B", genres=["Drama"], premiered="2005-01-01",
-                      rating={"average": 7.0}),
+            make_show(
+                id=1, name="A", genres=["Drama", "Crime"], rating={"average": 9.0}
+            ),
+            make_show(
+                id=2,
+                name="B",
+                genres=["Drama"],
+                premiered="2005-01-01",
+                rating={"average": 7.0},
+            ),
         ]
 
     def test_shows_per_genre(self):
