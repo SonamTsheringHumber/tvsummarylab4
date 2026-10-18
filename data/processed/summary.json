@@ -2,7 +2,7 @@
   "source_url": "https://api.tvmaze.com/shows?page=0",
   "records_processed": 240,
   "records_skipped": 0,
-  "generated_at_utc": "2026-10-09T12:09:49+00:00",
+  "generated_at_utc": "2026-10-18T03:27:52+00:00",
   "shows_per_genre": {
     "Drama": 154,
     "Comedy": 66,
@@ -71,5 +71,12 @@
     "no_language": 0,
     "no_premiere_date": 0,
     "no_network_or_web_channel": 0
-  }
+  },
+  "featured_shows": [
+    "Stargate Atlantis",
+    "Boardwalk Empire",
+    "Almost Human",
+    "The Following",
+    "Getting On"
+  ]
 }
