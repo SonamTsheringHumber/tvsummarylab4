@@ -17,7 +17,7 @@ from tvsummary.logging_setup import configure_logging
 logger = logging.getLogger(__name__)
 
 
-def main():
+def main() -> None:
     """Download, summarize and save; exit with a message on failure."""
     configure_logging("INFO")
     logger.info("Starting a run")

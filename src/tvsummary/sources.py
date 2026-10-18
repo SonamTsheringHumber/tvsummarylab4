@@ -1,6 +1,7 @@
 """Getting the data. The only module that imports requests."""
 
 import logging
+from typing import Any
 
 import requests
 
@@ -14,12 +15,16 @@ logger = logging.getLogger(__name__)
 class TVMazeSource:
     """Downloads shows from the TVmaze API and returns Show objects."""
 
-    def __init__(self, url=config.SOURCE_URL, timeout=config.TIMEOUT_SECONDS):
+    def __init__(
+        self,
+        url: str = config.SOURCE_URL,
+        timeout: float = config.TIMEOUT_SECONDS,
+    ) -> None:
         self.url = url
         self.timeout = timeout
         self.skipped_count = 0
 
-    def _download(self):
+    def _download(self) -> list[Any]:
         """Download the raw JSON list, raising a TVSummaryError on any problem."""
         try:
             response = requests.get(self.url, timeout=self.timeout)
@@ -51,10 +56,10 @@ class TVMazeSource:
         logger.debug("Downloaded %s raw records", len(data))
         return data
 
-    def _to_shows(self, raw_records):
+    def _to_shows(self, raw_records: list[Any]) -> list[Show]:
         """Keep usable records (dict, has id, no duplicate id) as Show objects."""
-        seen_ids = set()
-        shows = []
+        seen_ids: set[Any] = set()
+        shows: list[Show] = []
         for position, item in enumerate(raw_records):
             if not isinstance(item, dict):
                 logger.warning("Skipping record %s: not a JSON object", position)
@@ -71,7 +76,7 @@ class TVMazeSource:
         self.skipped_count = len(raw_records) - len(shows)
         return shows
 
-    def fetch(self):
+    def fetch(self) -> list[Show]:
         """Download and return a list of Show objects."""
         shows = self._to_shows(self._download())
         logger.info("Kept %s shows and skipped %s", len(shows), self.skipped_count)

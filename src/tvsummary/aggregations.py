@@ -1,6 +1,9 @@
 """Aggregations: a base class and one subclass per summary section."""
 
+from typing import Any
+
 from . import config
+from .models import Show
 
 
 class Aggregation:
@@ -8,7 +11,7 @@ class Aggregation:
 
     name = "aggregation"
 
-    def compute(self, shows):
+    def compute(self, shows: list[Show]) -> Any:
         """Return this aggregation's result for a list of Show objects."""
         raise NotImplementedError("Subclasses must override compute().")
 
@@ -18,8 +21,8 @@ class ShowsPerGenre(Aggregation):
 
     name = "shows_per_genre"
 
-    def compute(self, shows):
-        counts = {}
+    def compute(self, shows: list[Show]) -> dict[str, int]:
+        counts: dict[str, int] = {}
         for show in shows:
             for genre in show.genres:
                 counts[genre] = counts.get(genre, 0) + 1
@@ -31,8 +34,8 @@ class AverageRatingByLanguage(Aggregation):
 
     name = "average_rating_by_language"
 
-    def compute(self, shows):
-        totals = {}
+    def compute(self, shows: list[Show]) -> dict[str, dict[str, float]]:
+        totals: dict[str, list[float]] = {}
         for show in shows:
             if show.rating is None:
                 continue
@@ -54,8 +57,8 @@ class ShowsPerDecade(Aggregation):
 
     name = "shows_per_decade"
 
-    def compute(self, shows):
-        counts = {}
+    def compute(self, shows: list[Show]) -> dict[str, int]:
+        counts: dict[str, int] = {}
         for show in shows:
             if show.premiere_year is None:
                 continue
@@ -69,11 +72,13 @@ class TopRatedShows(Aggregation):
 
     name = "top_rated_shows"
 
-    def __init__(self, n=config.TOP_N):
+    def __init__(self, n: int = config.TOP_N) -> None:
         self.n = n
 
-    def compute(self, shows):
-        rated = [(s.rating, s.name) for s in shows if s.rating is not None]
+    def compute(self, shows: list[Show]) -> list[dict[str, Any]]:
+        rated: list[tuple[float, str]] = [
+            (s.rating, s.name) for s in shows if s.rating is not None
+        ]
         rated.sort(key=lambda pair: (-pair[0], pair[1]))
         return [{"name": name, "rating": rating} for rating, name in rated[: self.n]]
 
@@ -83,7 +88,7 @@ class MissingValues(Aggregation):
 
     name = "missing_values"
 
-    def compute(self, shows):
+    def compute(self, shows: list[Show]) -> dict[str, int]:
         return {
             "no_genre": sum(1 for s in shows if not s.genres),
             "no_rating": sum(1 for s in shows if s.rating is None),
@@ -93,7 +98,7 @@ class MissingValues(Aggregation):
         }
 
 
-def default_aggregations():
+def default_aggregations() -> list[Aggregation]:
     """Return the aggregations in the same order as the Lab 02 summary."""
     return [
         ShowsPerGenre(),

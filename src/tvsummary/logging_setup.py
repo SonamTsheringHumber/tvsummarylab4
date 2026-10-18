@@ -3,7 +3,7 @@
 import logging
 
 
-def configure_logging(level="INFO"):
+def configure_logging(level: str = "INFO") -> None:
     """Send log records to standard error at the given level."""
     logging.basicConfig(
         level=level,

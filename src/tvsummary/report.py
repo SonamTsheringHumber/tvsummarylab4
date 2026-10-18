@@ -4,18 +4,26 @@ import json
 import logging
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 from . import config
+from .aggregations import Aggregation
+from .models import Show
 
 logger = logging.getLogger(__name__)
 
 
-def build_summary(shows, skipped_count, aggregations, url=config.SOURCE_URL):
+def build_summary(
+    shows: list[Show],
+    skipped_count: int,
+    aggregations: list[Aggregation],
+    url: str = config.SOURCE_URL,
+) -> dict[str, Any]:
     """Combine every aggregation into one dict ready to write as JSON.
 
     Calls compute() on each object without checking its subclass.
     """
-    summary = {
+    summary: dict[str, Any] = {
         "source_url": url,
         "records_processed": len(shows),
         "records_skipped": skipped_count,
@@ -27,7 +35,9 @@ def build_summary(shows, skipped_count, aggregations, url=config.SOURCE_URL):
     return summary
 
 
-def write_summary(summary, path=config.OUTPUT_PATH):
+def write_summary(
+    summary: dict[str, Any], path: str | Path = config.OUTPUT_PATH
+) -> None:
     """Write the summary dict to path as UTF-8 JSON with 2-space indent."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
