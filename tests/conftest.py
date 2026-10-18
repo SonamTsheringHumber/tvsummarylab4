@@ -1,7 +1,9 @@
+from pathlib import Path
 from typing import Any
 
 import pytest
 
+from tvsummary.config import Settings, load_settings
 from tvsummary.models import Show
 
 
@@ -50,3 +52,26 @@ def raw_records() -> list[dict[str, Any]]:
 @pytest.fixture
 def shows(raw_records: list[dict[str, Any]]) -> list[Show]:
     return [Show(raw) for raw in raw_records]
+
+
+@pytest.fixture
+def config_file(tmp_path: Path) -> Path:
+    """A valid settings file that writes into tmp_path."""
+    path = tmp_path / "tvsummary.toml"
+    path.write_text(
+        'source_url = "https://example.invalid/shows"\n'
+        "timeout = 1\n"
+        f'output_dir = "{(tmp_path / "out").as_posix()}"\n'
+        "seed = 7\n"
+        "sample_size = 2\n"
+        'log_level = "DEBUG"\n'
+        "min_records = 2\n"
+        "top_n = 2\n",
+        encoding="utf-8",
+    )
+    return path
+
+
+@pytest.fixture
+def settings(config_file: Path) -> Settings:
+    return load_settings(config_file)

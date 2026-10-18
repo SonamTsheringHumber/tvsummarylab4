@@ -1,0 +1,11 @@
+# Every setting tvsummary reads. Change the seed to get a different
+# featured_shows list; keep it the same to repeat a run.
+
+source_url = "https://api.tvmaze.com/shows?page=0"
+timeout = 10          # seconds to wait for the download
+output_dir = "data/processed"
+seed = 42             # seeds random.Random for featured_shows
+sample_size = 5       # how many names go into featured_shows
+log_level = "INFO"    # DEBUG, INFO, WARNING, ERROR or CRITICAL
+min_records = 50      # fewer usable shows than this is a failed run
+top_n = 5             # length of the top_rated_shows list

@@ -5,7 +5,6 @@ from typing import Any
 
 import requests
 
-from . import config
 from .errors import DataShapeError, DownloadError
 from .models import Show
 
@@ -15,11 +14,7 @@ logger = logging.getLogger(__name__)
 class TVMazeSource:
     """Downloads shows from the TVmaze API and returns Show objects."""
 
-    def __init__(
-        self,
-        url: str = config.SOURCE_URL,
-        timeout: float = config.TIMEOUT_SECONDS,
-    ) -> None:
+    def __init__(self, url: str, timeout: float) -> None:
         self.url = url
         self.timeout = timeout
         self.skipped_count = 0

@@ -2,8 +2,10 @@
 
 from typing import Any
 
-from . import config
 from .models import Show
+
+UNKNOWN_LANGUAGE = "unknown"
+DEFAULT_TOP_N = 5
 
 
 class Aggregation:
@@ -39,7 +41,7 @@ class AverageRatingByLanguage(Aggregation):
         for show in shows:
             if show.rating is None:
                 continue
-            language = show.language or config.UNKNOWN_LANGUAGE
+            language = show.language or UNKNOWN_LANGUAGE
             entry = totals.setdefault(language, [0.0, 0])
             entry[0] += show.rating
             entry[1] += 1
@@ -72,7 +74,7 @@ class TopRatedShows(Aggregation):
 
     name = "top_rated_shows"
 
-    def __init__(self, n: int = config.TOP_N) -> None:
+    def __init__(self, n: int = DEFAULT_TOP_N) -> None:
         self.n = n
 
     def compute(self, shows: list[Show]) -> list[dict[str, Any]]:
@@ -98,12 +100,12 @@ class MissingValues(Aggregation):
         }
 
 
-def default_aggregations() -> list[Aggregation]:
+def default_aggregations(top_n: int = DEFAULT_TOP_N) -> list[Aggregation]:
     """Return the aggregations in the same order as the Lab 02 summary."""
     return [
         ShowsPerGenre(),
         AverageRatingByLanguage(),
         ShowsPerDecade(),
-        TopRatedShows(),
+        TopRatedShows(top_n),
         MissingValues(),
     ]
