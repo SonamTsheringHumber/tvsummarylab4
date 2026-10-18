@@ -3,11 +3,8 @@
 import requests
 
 from . import config
+from .errors import DataShapeError, DownloadError
 from .models import Show
-
-
-class DownloadError(Exception):
-    """Raised when the records cannot be downloaded or understood."""
 
 
 class TVMazeSource:
@@ -19,11 +16,10 @@ class TVMazeSource:
         self.skipped_count = 0
 
     def _download(self):
-        """Download the raw JSON list, raising DownloadError on any problem."""
+        """Download the raw JSON list, raising a TVSummaryError on any problem."""
         try:
             response = requests.get(self.url, timeout=self.timeout)
             response.raise_for_status()
-            data = response.json()
         except requests.exceptions.Timeout as exc:
             raise DownloadError(
                 f"The request to {self.url} timed out after {self.timeout} seconds."
@@ -34,13 +30,20 @@ class TVMazeSource:
             ) from exc
         except requests.exceptions.HTTPError as exc:
             raise DownloadError(f"The server returned an error: {exc}") from exc
-        except (requests.exceptions.RequestException, ValueError) as exc:
-            raise DownloadError(
-                f"Could not read the response from {self.url}: {exc}"
+        except requests.exceptions.RequestException as exc:
+            raise DownloadError(f"The request to {self.url} failed: {exc}") from exc
+
+        try:
+            data = response.json()
+        except ValueError as exc:
+            raise DataShapeError(
+                f"The response from {self.url} was not valid JSON."
             ) from exc
 
         if not isinstance(data, list):
-            raise DownloadError("Unexpected response format: expected a list of shows.")
+            raise DataShapeError(
+                "Unexpected response format: expected a list of shows."
+            )
         return data
 
     def _to_shows(self, raw_records):

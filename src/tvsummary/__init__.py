@@ -10,19 +10,22 @@ from .aggregations import (
     TopRatedShows,
     default_aggregations,
 )
+from .errors import DataShapeError, DownloadError, TVSummaryError
 from .models import Show
 from .report import build_summary, write_summary
-from .sources import DownloadError, TVMazeSource
+from .sources import TVMazeSource
 
 __all__ = [
     "Aggregation",
     "AverageRatingByLanguage",
+    "DataShapeError",
     "DownloadError",
     "MissingValues",
     "Show",
     "ShowsPerDecade",
     "ShowsPerGenre",
     "TVMazeSource",
+    "TVSummaryError",
     "TopRatedShows",
     "build_summary",
     "config",

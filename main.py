@@ -5,6 +5,7 @@ import sys
 from tvsummary import (
     DownloadError,
     TVMazeSource,
+    TVSummaryError,
     build_summary,
     config,
     default_aggregations,
@@ -24,7 +25,7 @@ def main():
             )
         summary = build_summary(shows, source.skipped_count, default_aggregations())
         write_summary(summary)
-    except DownloadError as exc:
+    except TVSummaryError as exc:
         sys.exit(f"Error: {exc}")
     except OSError as exc:
         sys.exit(f"Error: could not write {config.OUTPUT_PATH}: {exc}")
