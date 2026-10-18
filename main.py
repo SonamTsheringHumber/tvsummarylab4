@@ -1,5 +1,6 @@
 """Entry point: wires the pieces together and prints messages."""
 
+import logging
 import sys
 
 from tvsummary import (
@@ -11,10 +12,15 @@ from tvsummary import (
     default_aggregations,
     write_summary,
 )
+from tvsummary.logging_setup import configure_logging
+
+logger = logging.getLogger(__name__)
 
 
 def main():
     """Download, summarize and save; exit with a message on failure."""
+    configure_logging("INFO")
+    logger.info("Starting a run")
     source = TVMazeSource()
     try:
         shows = source.fetch()
@@ -26,8 +32,10 @@ def main():
         summary = build_summary(shows, source.skipped_count, default_aggregations())
         write_summary(summary)
     except TVSummaryError as exc:
+        logger.error("Run failed: %s", exc)
         sys.exit(f"Error: {exc}")
     except OSError as exc:
+        logger.error("Could not write %s: %s", config.OUTPUT_PATH, exc)
         sys.exit(f"Error: could not write {config.OUTPUT_PATH}: {exc}")
 
     print(

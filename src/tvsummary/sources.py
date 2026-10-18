@@ -1,10 +1,14 @@
 """Getting the data. The only module that imports requests."""
 
+import logging
+
 import requests
 
 from . import config
 from .errors import DataShapeError, DownloadError
 from .models import Show
+
+logger = logging.getLogger(__name__)
 
 
 class TVMazeSource:
@@ -44,17 +48,23 @@ class TVMazeSource:
             raise DataShapeError(
                 "Unexpected response format: expected a list of shows."
             )
+        logger.debug("Downloaded %s raw records", len(data))
         return data
 
     def _to_shows(self, raw_records):
         """Keep usable records (dict, has id, no duplicate id) as Show objects."""
         seen_ids = set()
         shows = []
-        for item in raw_records:
+        for position, item in enumerate(raw_records):
             if not isinstance(item, dict):
+                logger.warning("Skipping record %s: not a JSON object", position)
                 continue
             show_id = item.get("id")
-            if show_id is None or show_id in seen_ids:
+            if show_id is None:
+                logger.warning("Skipping record %s: it has no id", position)
+                continue
+            if show_id in seen_ids:
+                logger.warning("Skipping record %s: duplicate id %s", position, show_id)
                 continue
             seen_ids.add(show_id)
             shows.append(Show(item))
@@ -63,4 +73,6 @@ class TVMazeSource:
 
     def fetch(self):
         """Download and return a list of Show objects."""
-        return self._to_shows(self._download())
+        shows = self._to_shows(self._download())
+        logger.info("Kept %s shows and skipped %s", len(shows), self.skipped_count)
+        return shows

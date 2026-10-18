@@ -1,10 +1,13 @@
 """Building and writing the summary."""
 
 import json
+import logging
 from datetime import UTC, datetime
 from pathlib import Path
 
 from . import config
+
+logger = logging.getLogger(__name__)
 
 
 def build_summary(shows, skipped_count, aggregations, url=config.SOURCE_URL):
@@ -20,6 +23,7 @@ def build_summary(shows, skipped_count, aggregations, url=config.SOURCE_URL):
     }
     for aggregation in aggregations:
         summary[aggregation.name] = aggregation.compute(shows)
+    logger.debug("Built a summary with %s keys", len(summary))
     return summary
 
 
@@ -29,3 +33,4 @@ def write_summary(summary, path=config.OUTPUT_PATH):
     path.parent.mkdir(parents=True, exist_ok=True)
     text = json.dumps(summary, indent=2, ensure_ascii=False)
     path.write_text(text, encoding="utf-8")
+    logger.info("Wrote %s", path)
